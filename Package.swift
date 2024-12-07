@@ -5,6 +5,7 @@ let package = Package(
     name: "ElevenLabsSDK",
     platforms: [
         .iOS(.v17),
+        .macOS(.v15)
     ],
     products: [
         .library(

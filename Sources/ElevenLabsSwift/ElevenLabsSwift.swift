@@ -317,11 +317,14 @@ public class ElevenLabsSDK {
         }
 
         public static func create(sampleRate: Double) async throws -> Input {
+            
+#if os(iOS)
             // Initialize the Audio Session
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
             try audioSession.setPreferredSampleRate(sampleRate)
             try audioSession.setActive(true)
+#endif
 
             // Define the Audio Component
             var audioComponentDesc = AudioComponentDescription(
@@ -1065,6 +1068,7 @@ public class ElevenLabsSDK {
     // MARK: - Audio Session Configuration
 
     private static func configureAudioSession() throws {
+#if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()
         do {
             // Configure for voice chat with minimum latency
@@ -1090,6 +1094,7 @@ public class ElevenLabsSDK {
             print("Failed to configure audio session: \(error.localizedDescription)")
             throw error
         }
+#endif
     }
 }
 
