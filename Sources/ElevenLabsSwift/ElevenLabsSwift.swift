@@ -671,7 +671,9 @@ public class ElevenLabsSDK {
                 // Convert buffer data to base64 string
                 if let int16ChannelData = buffer.int16ChannelData {
                     let frameLength = Int(buffer.frameLength)
-                    let data = Data(bytes: int16ChannelData[0], count: frameLength * MemoryLayout<Int16>.size)
+                    let channelCount = Int(buffer.format.channelCount)
+                    let sampleCount = frameLength * channelCount
+                    let data = Data(bytes: int16ChannelData[0], count: sampleCount * MemoryLayout<Int16>.size)
                     let base64String = data.base64EncodedString()
                     let message: [String: Any] = ["type": "user_audio_chunk", "user_audio_chunk": base64String]
                     self.sendWebSocketMessage(message)
