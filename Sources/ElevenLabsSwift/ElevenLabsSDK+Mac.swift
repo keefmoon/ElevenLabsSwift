@@ -44,7 +44,24 @@ extension ElevenLabsSDK {
         }
         
         private func convertAndProcessAudioBuffer(_ buffer: AVAudioPCMBuffer) {
-            recordCallback?(buffer, calculateRMS(from: buffer))
+            
+            guard let audioConverter = audioConverter else { return }
+
+            let convertedBuffer = AVAudioPCMBuffer(pcmFormat: audioConverter.outputFormat, frameCapacity: AVAudioFrameCount(buffer.frameCapacity))!
+            
+            var error: NSError? = nil
+            let inputBlock: AVAudioConverterInputBlock = { inNumPackets, outStatus in
+                outStatus.pointee = .haveData
+                return buffer
+            }
+
+            audioConverter.convert(to: convertedBuffer, error: &error, withInputFrom: inputBlock)
+            
+            if let error = error {
+                print("Audio conversion error: \(error)")
+            } else {
+                recordCallback?(convertedBuffer, calculateRMS(from: convertedBuffer))
+            }
         }
         
         private func calculateRMS(from buffer: AVAudioPCMBuffer) -> Float {
